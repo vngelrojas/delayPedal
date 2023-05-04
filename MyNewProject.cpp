@@ -76,7 +76,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
         // 
         ProcessControls();
         // Check for tempo change
-        //CheckTempo();
+        CheckTempo();
         // Set delays with new bpm
         SetDelays();            
 
@@ -212,7 +212,76 @@ void SetDelays()
     }
 }
 
+void CheckTempo()
+{
+    
 
+    uint32_t tick;    // The position of the counter when the second tap occurs
+    uint32_t freq;    // The frequency of each tick of the timer in Hz.
+    float seconds;    // The seconds elapsed between first and second tap
+
+
+    tick = timer.GetTick();              
+    freq = timer.GetFreq();             
+    seconds = (float)tick / (float)freq; // Convert the 3 variables above to seconds
+
+    // elapsedSeconds = seconds - secondCount
+    // secondCount += seconds;
+  
+    //Check if the timer has gone past our max delay, if so, abandon this tap tempo and keep the old one
+    if(seconds > MAX_DELAY_SEC && tapping)
+    {
+        hw.PrintLine("Over 3 sec");
+        timer.DeInit();
+        timer.Init(*configPtr);
+
+        // Turn the timer off
+        timer.Stop();
+        tapping = false;         // Reset the tapping flag 
+    }
+
+    // Check if the button was clicked
+    tempoButton.Debounce();
+    if(tempoButton.RisingEdge() )
+    {
+        // The first tap
+        if(tapping == false)
+        {
+            tapping = true; // Set the tapping flag
+
+            // Start the timer and begin counting
+            timer.Start(); 
+
+
+        }
+        // The second tap
+        else 
+        {
+            tapping = false; // Reset tapping flag
+
+            // Stop the timer
+            timer.Stop();
+            timer.DeInit();
+            timer.Init(*configPtr);
+
+            // Only set new BPM if its greater than our minimum
+            if(seconds > MIN_DELAY_SEC )
+            {
+                BPM = -33.3333f*(seconds)+120; // Set the BPM for the delays 
+                // Set all delays to new bpm
+            }
+            else
+                hw.PrintLine("Under .6");
+
+
+            
+        }
+    
+
+    }
+
+
+}
 
 void InitHeadButtons()
 {
