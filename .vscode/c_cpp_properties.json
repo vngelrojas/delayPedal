@@ -1,0 +1,20 @@
+{
+  "configurations": [
+    {
+      "name": "windows-clang-arm64",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/../../libDaisy//**",
+        "${workspaceFolder}/../../DaisySP//**"
+      ],
+      "compilerPath": "C:/Program Files/DaisyToolchain/bin/arm-none-eabi-g++.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-clang-arm64",
+      "compilerArgs": [
+        ""
+      ]
+    }
+  ],
+  "version": 4
+}
